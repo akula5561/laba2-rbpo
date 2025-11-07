@@ -1,3 +1,6 @@
+Библиотека postman
+https://api.getpostman.com/collections/49197979-dc04cdcc-bc90-4ede-bdad-5df3f295eadc
+
 from pathlib import Path
 
 readme_content = """# 📚 Library Management System
