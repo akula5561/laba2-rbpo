@@ -14,7 +14,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/readers")
+@RequestMapping("/readers")
 public class ReaderController {
 
     private final ReaderService service;

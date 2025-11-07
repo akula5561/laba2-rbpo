@@ -14,27 +14,39 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/books") // итоговый URL: /api/books/
 public class BookController {
 
     private final BookService service;
 
-    public BookController(BookService service) { this.service = service; }
+    public BookController(BookService service) {
+        this.service = service;
+    }
+
+    /* ==== CRUD ==== */
 
     @PostMapping
     public ResponseEntity<BookDto> create(@Valid @RequestBody CreateBookRequest req) {
         BookDto saved = service.create(req);
-        return ResponseEntity.created(URI.create("/api/books/" + saved.getId())).body(saved);
+        return ResponseEntity
+                .created(URI.create("/api/books/" + saved.getId()))
+                .body(saved);
     }
 
     @GetMapping
-    public List<BookDto> getAll() { return service.getAll(); }
+    public List<BookDto> getAll() {
+        return service.getAll();
+    }
 
     @GetMapping("/page")
-    public Page<BookDto> page(Pageable pageable) { return service.getPage(pageable); }
+    public Page<BookDto> getPage(Pageable pageable) {
+        return service.getPage(pageable);
+    }
 
     @GetMapping("/{id}")
-    public BookDto get(@PathVariable Long id) { return service.getById(id); }
+    public BookDto getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
 
     @PutMapping("/{id}")
     public BookDto update(@PathVariable Long id, @Valid @RequestBody UpdateBookRequest req) {
@@ -47,18 +59,29 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/author/{authorId}")
-    public List<BookDto> byAuthor(@PathVariable Long authorId) { return service.findByAuthor(authorId); }
+    /* ==== Бизнес-операции над книгами (если у тебя они есть в сервисе) ==== */
 
-    @GetMapping("/search")
-    public List<BookDto> search(@RequestParam("q") String q) { return service.searchByTitle(q); }
-
+    // найти все доступные
     @GetMapping("/available")
-    public List<BookDto> available() { return service.listAvailable(); }
+    public List<BookDto> listAvailable() {
+        return service.listAvailable();
+    }
 
+    // отдать книгу читателю
     @PatchMapping("/{id}/borrow")
-    public BookDto borrow(@PathVariable Long id) { return service.borrow(id); }
+    public BookDto borrow(@PathVariable Long id) {
+        return service.borrow(id);
+    }
 
+    // вернуть книгу
     @PatchMapping("/{id}/return")
-    public BookDto giveBack(@PathVariable Long id) { return service.giveBack(id); }
+    public BookDto giveBack(@PathVariable Long id) {
+        return service.giveBack(id);
+    }
+
+    // поиск по названию
+    @GetMapping("/search")
+    public List<BookDto> search(@RequestParam("q") String q) {
+        return service.searchByTitle(q);
+    }
 }

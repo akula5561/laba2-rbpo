@@ -1,8 +1,10 @@
 version: "3.9"
+
 services:
-  postgres:
-    image: postgres:16-alpine
+  db:
+    image: postgres:16
     container_name: library-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: library
       POSTGRES_USER: library
@@ -11,7 +13,11 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U library -d library"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
 
 volumes:
   pgdata:
