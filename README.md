@@ -181,7 +181,94 @@ GET /api/loans/overdue
  
  
 
- Автор проекта
-Данил Парфенов 
+ Работа с базой данных PostgreSQL
+ Подключение к PostgreSQL
 
+psql -U postgres
+Если ты используешь Postgres.app (на macOS), просто открой её и введи:
+
+psql -p5432 -U danilparfenov
+
+ Создание базы данных и пользователя
+
+-- Создание базы данных
+CREATE DATABASE library;
+
+-- Создание пользователя (если его ещё нет)
+CREATE ROLE library WITH LOGIN PASSWORD 'library';
+
+-- Назначение прав пользователю
+GRANT ALL PRIVILEGES ON DATABASE library TO library;
+
+ Подключение к нужной БД
+
+\c library
+
+ Настройка прав и схемы
+
+-- Разрешаем пользователю доступ к схеме public
+GRANT ALL ON SCHEMA public TO library;
+
+-- Даём права на создание таблиц
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON TABLES TO library;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL ON SEQUENCES TO library;
+
+ Проверка существующих таблиц
+
+\dt
+Вывод покажет, например:
+
+ public | authors | table | library
+ public | books   | table | library
+ public | loans   | table | library
+ public | readers | table | library
+
+ Просмотр данных в таблице
+
+SELECT * FROM authors;
+SELECT * FROM books;
+SELECT * FROM readers;
+SELECT * FROM loans;
+
+ Примеры SQL-запросов
+
+-- Добавить автора
+INSERT INTO authors (name, bio)
+VALUES ('J.K. Rowling', 'British writer');
+
+-- Добавить книгу
+INSERT INTO books (title, published_year, available, author_id)
+VALUES ('Harry Potter and the Chamber of Secrets', 1998, true, 1);
+
+-- Добавить читателя
+INSERT INTO readers (name, email, phone)
+VALUES ('Ivan Ivanov', 'ivan@mail.ru', '+79999999999');
+
+-- Зарегистрировать выдачу книги
+INSERT INTO loans (book_id, reader_id, loan_date, due_date)
+VALUES (1, 1, CURRENT_DATE, CURRENT_DATE + INTERVAL '7 day');
+
+-- Проверить просроченные выдачи
+SELECT * FROM loans WHERE due_date < CURRENT_DATE AND return_date IS NULL;
+
+ Полезные команды psql
+Команда	Назначение
+\l	 Показать все базы данных
+\c db_name	Подключиться к БД
+\dt	 Показать таблицы
+\d table_name	 Структура таблицы
+\du	 Список пользователей
+\q	 Выйти из psql
+
+ Удаление БД и пользователя (если нужно)
+
+DROP DATABASE library;
+DROP ROLE library;
+
+Автор работы;
+Парфенов Данил
+Группа; БАС2301
  
